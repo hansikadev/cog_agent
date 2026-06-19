@@ -28,17 +28,21 @@ def process_document_background(job_id: str, file_bytes: bytes):
     try:
         # 1. Extract text
         text = extract_text_from_pdf(file_bytes)
+        print(f"[{job_id}] PDF text extracted: {len(text)} characters")
         
         # 2. Extract claims
         claims = extract_claims_from_text(text)
+        print(f"[{job_id}] Claims extracted: {len(claims)} claims found")
         
         jobs[job_id]["total_claims"] = len(claims)
         jobs[job_id]["claims"] = []
         jobs[job_id]["status"] = "EXTRACTED"
+        print(f"[{job_id}] Status set to EXTRACTED with {len(claims)} claims")
         
         # 3. Verify each claim
-        for claim in claims:
+        for idx, claim in enumerate(claims):
             result = verify_claim(claim)
+            print(f"[{job_id}] Verified claim {idx+1}/{len(claims)}: {claim.claim_text[:50]}...")
             
             jobs[job_id]["claims"].append({
                 "original_claim": claim.model_dump(),
@@ -51,6 +55,7 @@ def process_document_background(job_id: str, file_bytes: bytes):
             jobs[job_id]["verified_count"] = len(jobs[job_id]["claims"])
             
         jobs[job_id]["status"] = "COMPLETED"
+        print(f"[{job_id}] Processing COMPLETED. Total claims: {len(claims)}, Verified: {len(jobs[job_id]['claims'])}")
         
     except Exception as e:
         print(f"Background task failed: {e}")

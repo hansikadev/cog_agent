@@ -51,7 +51,14 @@ def extract_claims_from_text(text: str) -> list[ExtractedClaim]:
         
         data = json.loads(response.choices[0].message.content)
         claims = [ExtractedClaim(**item) for item in data.get("claims", [])]
+        print(f"Successfully extracted {len(claims)} claims")
         return claims
+    except json.JSONDecodeError as e:
+        print(f"JSON parsing error: {e}")
+        print(f"Response content: {response.choices[0].message.content}")
+        return []
     except Exception as e:
         print(f"Error extracting claims: {e}")
+        import traceback
+        traceback.print_exc()
         return []
