@@ -10,7 +10,7 @@ function App() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL;;
+  const API_URL = "https://cog-agent-backend.onrender.com/api";
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
